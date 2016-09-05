@@ -1,7 +1,8 @@
 # Google Speech API
 ---------------------------------------------
 
-A script to smoothly run the Google API to predict the speech from the audio files. I've found that the prediction by google API is really good if there is less noise (which definitely is a big problem in real-time scenarios). Just a personal opinion, if the problem of noise reduction and background reduction can be done, probably google can give a highly accurate result with high level of predictive confidence [for english].
+> A script to smoothly run the Google API to predict the speech from the audio files. I've found that the prediction by google API is really good if there is less noise (which definitely is a big problem in real-time scenarios). 
+> Just a personal opinion, if the problem of noise reduction and background reduction can be handled properly with the higher achievable accuracy, probably google can give a highly accurate result with high level of predictive confidence [for english].
 
 To start with the API there are some pre-requisites.
 - Before starting you will need the python library of Google for credentials and interacting with Google's API
@@ -33,4 +34,14 @@ transcript = pred_model.get_prediction('audio.raw')
 # Just to predit for all speech samples in a folder
 #transcripts = pred_model.get_predictions_all(folder path)
 transcripts = pred_model.get_predictions_all('/path/all_speech/')
+```
+
+Have also added [WER](https://en.wikipedia.org/wiki/Word_error_rate) implementation which I have picked up from zszyellow's [implementation](https://github.com/zszyellow/WER-in-python).
+
+> Comment out the print statements if it is irritating for a number of texts.
+
+```python 
+import wer as wer
+wer_model = wer()
+wer_value = wer_model('Reference text', 'Hypothesized text')
 ```
