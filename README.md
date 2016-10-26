@@ -45,3 +45,6 @@ import wer as wer
 wer_model = wer()
 wer_value = wer_model('Reference text', 'Hypothesized text')
 ```
+
+- Made some changes, added pyDub library to check if the audio is greater than 60 secs. If it is: the code breaks the audio into samples smaller than 60 secs. 
+- Uses Google API to predict the text for all audio parts and then returns the coalesced text from all the audios.
