@@ -60,20 +60,25 @@ class predict_speech():
     	return ''.join(random.choice('0123456789ABCDEF') for i in range(8))
 
     def get_prediction_mp3(self, speech_file):
-    	list_chunks = get_audio_chunks(speech_file)
-    	response = consolidate_resuls(list_chunks)
+    	list_chunks = self.get_audio_chunks(speech_file)
+    	response = self.consolidate_resuls(list_chunks)
     	return response
+
+    def get_prediction_wav(self, speech_file):
+        list_chunks = self.get_audio_chunks(speech_file)
+        response = self.consolidate_resuls(list_chunks)
+        return response
 
     def consolidate_results(self, list_chunks):
     	final_response = ''
     	for chunk in list_chunks:
     		if(chunk!='<error>'):
-	    		tmp_response = get_prediction(temp_addr)
+	    		tmp_response = self.get_prediction(temp_addr)
 	    		final_response = final_response+' '+tmp_response
     	return final_response
 
     def convert_raw(self, speech_file):
-    	temp_addr = 'temp/temp-'+generate_temp_key()+'.raw'
+    	temp_addr = 'temp/temp-'+self.generate_temp_key()+'.raw'
     	command = 'sox '+speech_file+' --rate 16000 --bits 16 --encoding signed-integer --endian little --channels 1 '+temp_addr
     	flag_done = subprocess.call(command, shell=True)
     	if(flag_done!=0):
@@ -91,10 +96,10 @@ class predict_speech():
     		while((len(sound)/1000)>limit_secs):
     			tmp_sound = sound[:(limit_secs*1000)]
     			sound = sound[(limit_secs*1000):]
-    			tmp_mp3_addr = 'temp/temp-'+generate_temp_key()+'.wav'
+    			tmp_mp3_addr = 'temp/temp-'+self.generate_temp_key()+'.wav'
     			tmp_sound.to_mp3(tmp_mp3_addr)
     			list_chunks.append(self.convert_raw(tmp_mp3_addr))
-    		tmp_mp3_addr = 'temp/temp-'+generate_temp_key()+'.wav'
+    		tmp_mp3_addr = 'temp/temp-'+self.generate_temp_key()+'.wav'
     		sound.to_mp3(tmp_mp3_addr)
     		list_chunks.append(self.convert_raw(tmp_mp3_addr))
 	    else:

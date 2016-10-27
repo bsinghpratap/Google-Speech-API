@@ -34,8 +34,11 @@ transcript = pred_model.get_prediction('audio.raw')
 # Just to predit for all speech samples in a folder
 #transcripts = pred_model.get_predictions_all(folder path)
 transcripts = pred_model.get_predictions_all('/path/all_speech/')
-```
 
+# To predict for a mp3/wav file, incase the audio is greater than 60 secs- it breaks it into smaller chunks and converts them into raw file format
+transcripts = pred_model.get_prediction_mp3('/path/audio.mp3')
+transcripts = pred_model.get_prediction_wav('/path/audio.wav')
+```
 Have also added [WER](https://en.wikipedia.org/wiki/Word_error_rate) implementation which I have picked up from zszyellow's [implementation](https://github.com/zszyellow/WER-in-python).
 
 > Comment out the print statements if it is irritating for a number of texts.
@@ -46,5 +49,11 @@ wer_model = wer()
 wer_value = wer_model('Reference text', 'Hypothesized text')
 ```
 
-- Made some changes, added pyDub library to check if the audio is greater than 60 secs. If it is: the code breaks the audio into samples smaller than 60 secs. 
+- Made some changes, added pydub library to check if the audio is greater than 60 secs. If it is: the code breaks the audio into samples smaller than 60 secs. 
 - Uses Google API to predict the text for all audio parts and then returns the coalesced text from all the audios.
+
+# Library dependencies
+- [pydub](https://github.com/jiaaro/pydub): To install
+```shell
+pip install pydub
+```
