@@ -1,11 +1,14 @@
 import argparse
 import base64
 import json
+import subprocess
+import random
 
 from googleapiclient import discovery
 import httplib2
 from oauth2client.client import GoogleCredentials
 from pydub import AudioSegment
+
 from os import listdir
 from os.path import isfile, join
 
@@ -37,9 +40,7 @@ class predict_speech():
     def get_prediction(self, speech_file):
         with open(speech_file, 'rb') as speech:
             speech_content = base64.b64encode(speech.read())
-        #sound = AudioSegment.from_mp3("test_speech.mp3")
         service = self.get_speech_service()
-        #print(type(speech_content))
         service_request = service.speech().syncrecognize(
             body={
                 'config': {
@@ -52,9 +53,53 @@ class predict_speech():
                     }
                 })
         response = service_request.execute()
-        #print(response)
         #print(json.dumps(response))
         return response
+
+    def generate_temp_key():
+    	return ''.join(random.choice('0123456789ABCDEF') for i in range(8))
+
+    def get_prediction_mp3(self, speech_file):
+    	list_chunks = get_audio_chunks(speech_file)
+    	response = consolidate_resuls(list_chunks)
+    	return response
+
+    def consolidate_results(self, list_chunks):
+    	final_response = ''
+    	for chunk in list_chunks:
+    		if(chunk!='<error>'):
+	    		tmp_response = get_prediction(temp_addr)
+	    		final_response = final_response+' '+tmp_response
+    	return final_response
+
+    def convert_raw(self, speech_file):
+    	temp_addr = 'temp/temp-'+generate_temp_key()+'.raw'
+    	command = 'sox '+speech_file+' --rate 16000 --bits 16 --encoding signed-integer --endian little --channels 1 '+temp_addr
+    	flag_done = subprocess.call(command, shell=True)
+    	if(flag_done!=0):
+    		# This tag is just to find that the chunk or the audio cannot be converted to the raw file format
+    		print(' <error in converting the chunk into raw file format> ')
+    		return '<error>'
+    	else:
+    		return temp_addr
+
+    def get_audio_chunks(self, speech_file):
+    	limit_secs = 60
+    	list_chunks = []
+    	sound = AudioSegment.from_mp3(speech_file)
+    	if((len(sound)/1000)>limit_secs):
+    		while((len(sound)/1000)>limit_secs):
+    			tmp_sound = sound[:(limit_secs*1000)]
+    			sound = sound[(limit_secs*1000):]
+    			tmp_mp3_addr = 'temp/temp-'+generate_temp_key()+'.wav'
+    			tmp_sound.to_mp3(tmp_mp3_addr)
+    			list_chunks.append(self.convert_raw(tmp_mp3_addr))
+    		tmp_mp3_addr = 'temp/temp-'+generate_temp_key()+'.wav'
+    		sound.to_mp3(tmp_mp3_addr)
+    		list_chunks.append(self.convert_raw(tmp_mp3_addr))
+	    else:
+	    	list_chunks.append(self.convert_raw(speech_file))
+	    return list_chunks
 
     def get_speech_service(self):
         credentials = GoogleCredentials.get_application_default().create_scoped(
