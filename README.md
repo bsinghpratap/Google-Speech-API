@@ -44,9 +44,9 @@ Have also added [WER](https://en.wikipedia.org/wiki/Word_error_rate) implementat
 > Comment out the print statements if it is irritating for a number of texts.
 
 ```python 
-import wer as wer
-wer_model = wer()
-wer_value = wer_model('Reference text', 'Hypothesized text')
+import wer
+wer_model = wer.wer()
+wer_value = wer_model.predict('Reference text', 'Hypothesized text')
 ```
 
 - Made some changes, added pydub library to check if the audio is greater than 60 secs. If it is: the code breaks the audio into samples smaller than 60 secs. 
